@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AfriDoc Intelligence RAG | Recherche documentaire privée</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#ecedf9;background:#0b1020;color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 83% 8%,#242451 0,transparent 38%),#0b1020}.wrap{max-width:1250px;margin:auto;padding:30px 24px}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:34px}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.1px;font-size:20px}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#9e6dfa,#574ad1);display:grid;place-items:center;box-shadow:0 8px 28px #654de566;font-size:20px}
+.tag{border:1px solid #45446a;color:#c3b7fd;background:#211d3b;border-radius:30px;padding:7px 12px;font-size:12px}
+h1{font-size:clamp(28px,4vw,44px);margin:0 0 12px;letter-spacing:-1.5px;line-height:1.15}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:28px}
+.hero p{color:#b1b9d1;max-width:680px;line-height:1.6;margin:0}.status{font-size:12px;color:#aaa9d4}
+.layout{display:grid;grid-template-columns:minmax(330px,.82fr) minmax(420px,1.3fr);gap:18px}.card{background:#141a30;border:1px solid #2a314e;border-radius:19px;padding:23px;box-shadow:0 16px 48px #0002}
+.card h2{font-size:17px;margin:0 0 8px}.muted{color:#aeb6d1;font-size:13px;line-height:1.55}.stack{display:grid;gap:18px}
+label{display:block;color:#b4bbd6;font-size:12px;font-weight:700;margin:16px 0 7px}
+input,select,textarea{width:100%;border:1px solid #383e5e;border-radius:10px;padding:12px 13px;background:#0e1428;color:#f4f4ff;outline:0;font:inherit}
+textarea{min-height:108px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:#987bff;box-shadow:0 0 0 3px #9c7cff22}
+button{background:linear-gradient(125deg,#8453ed,#6548c8);border:0;border-radius:10px;color:white;padding:12px 17px;cursor:pointer;font-weight:700;font:inherit}
+button:hover{filter:brightness(1.15)}button.secondary{background:#252e4e;border:1px solid #424b6c}button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.doc{border:1px solid #333b59;border-radius:11px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}
+.doc strong{font-size:13px;word-break:break-word}.doc small{display:block;color:#8993ae;margin-top:3px}.doc button{padding:6px 9px;font-size:12px;background:#412936}
+.split{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{padding:6px 10px;border:1px solid #50568a;background:#25244a;color:#c6c0ff;border-radius:20px;font-size:11px}
+.response{background:#0e1427;border:1px solid #2e3556;border-radius:12px;min-height:190px;padding:18px;white-space:pre-wrap;line-height:1.65;font-size:14px}
+.source{border-left:2px solid #9b7dff;background:#1b2240;padding:12px 14px;margin-top:10px;border-radius:0 10px 10px 0}
+.source strong{color:#c7b3ff;font-size:12px}.source p{font-size:12px;color:#bbc5df;margin:7px 0;line-height:1.6}
+.trace{white-space:pre-wrap;color:#a4e3d2;font:12px ui-monospace,Consolas,monospace}footer{color:#78849c;text-align:center;font-size:12px;padding:28px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.hero{display:block}.wrap{padding:20px 14px}header{flex-wrap:wrap}}
+</style></head>
+<body><div class="wrap"><header><div class="brand"><span class="logo">◈</span>AfriDoc <span style="color:#b4a0ff">Intelligence RAG</span></div><span class="tag">RAG classique + RAG agentique</span></header>
+<section class="hero"><div><h1>Vos documents deviennent<br><span style="color:#ab98ff">des réponses vérifiables.</span></h1><p>Centralisez vos connaissances, interrogez vos sources et retracez les opérations de recherche avec des références explicites.</p></div><span class="status">● LangChain · LangGraph · FastAPI · Serveur privé</span></section>
+<div class="layout"><div class="stack">
+<section class="card"><h2>Connexion & documents</h2><p class="muted">Votre clé reste dans cette page, sans stockage local.</p><label for="key">Clé API</label><input type="password" id="key" autocomplete="off" placeholder="APP_API_KEY"><div class="actions"><button class="secondary" id="refresh">Actualiser les documents</button></div><label for="file">Importer un document</label><input type="file" id="file" accept=".pdf,.txt,.md"><div class="actions"><button id="upload">Importer (5 Mo max)</button></div><p id="uploadStatus" class="muted" role="status"></p></section>
+<section class="card"><div class="split"><h2>Base documentaire</h2><span id="count" class="pill">0 document</span></div><div id="documents"><p class="muted">Ajoutez un document pour commencer.</p></div></section>
+<section class="card"><h2>Fonctionnement</h2><p class="muted">1. Extraction et découpage en segments · 2. Classement des passages · 3. Réponse appuyée sur les documents · 4. Vérification des références. Sans clé LLM, des extraits sont fournis.</p></section>
+</div><div class="stack">
+<section class="card"><div class="split"><h2>Assistant documentaire</h2><span class="pill">Recherche sourcée</span></div><label for="mode">Mode d'interrogation</label><select id="mode"><option value="classic">RAG classique · recherche + réponse</option><option value="agentic">RAG agentique · outils & traçabilité</option></select>
+<label for="question">Votre question</label><textarea id="question" placeholder="Ex. Quelles sont les conditions d'éligibilité au financement des coopératives ?"></textarea>
+<div id="compareFields" style="display:none"><label for="sourceA">Document A (comparaison optionnelle)</label><select id="sourceA"><option value="">Aucun</option></select><label for="sourceB">Document B</label><select id="sourceB"><option value="">Aucun</option></select></div>
+<div class="actions"><button id="ask">Interroger les documents</button><button id="example" class="secondary">Question d'exemple</button></div></section>
+<section class="card"><div class="split"><h2>Réponse</h2><span id="modePill" class="pill">En attente</span></div><div id="answer" class="response" aria-live="polite">Importez un fichier, puis posez votre question.</div></section>
+<section class="card"><div class="split"><h2>Références et preuves</h2><span id="sourceCount" class="pill">0 source</span></div><div id="sources" class="muted">Les sources seront affichées ici.</div></section>
+<section class="card" id="traceCard" style="display:none"><h2>Journal des outils</h2><pre id="trace" class="trace"></pre></section>
+</div></div><footer>Démonstration technique · les documents fictifs inclus servent uniquement aux essais · API interactive sur /docs</footer></div>
+<script>
+const $=x=>document.getElementById(x);let docs=[];
+const headers=()=>({'X-API-Key':$('key').value});
+async function request(path,options={}){const res=await fetch(path,{...options,headers:{...headers(),...(options.headers||{})}});const data=await res.json();if(!res.ok)throw Error(typeof data.detail==='string'?data.detail:`Erreur HTTP ${res.status}`);return data}
+function el(tag,txt){let a=document.createElement(tag);a.textContent=txt;return a}
+function setStatus(id,msg){$(id).textContent=msg}
+async function refresh(){try{docs=await request('/v1/documents');$('documents').replaceChildren();$('count').textContent=`${docs.length} document(s)`;for(const sel of [$('sourceA'),$('sourceB')]){sel.replaceChildren(new Option('Aucun',''));docs.forEach(d=>sel.add(new Option(d.name,d.name)))}if(!docs.length)$('documents').append(el('p','Aucun document.'));for(const d of docs){let c=el('div','');c.className='doc';let inf=el('div','');inf.append(el('strong',d.name),el('small','Ajout : '+d.created_at.slice(0,10)));let b=el('button','Supprimer');b.onclick=async()=>{if(!confirm('Supprimer ce document ?'))return;await request('/v1/documents/'+encodeURIComponent(d.id),{method:'DELETE'});refresh()};c.append(inf,b);$('documents').append(c)}}catch(e){setStatus('uploadStatus',e.message)}}
+$('refresh').onclick=refresh;
+$('mode').onchange=()=>{$('compareFields').style.display=$('mode').value==='agentic'?'block':'none'};
+$('example').onclick=()=>{$('question').value='Quelles sont les conditions de financement présentées dans les documents ?'};
+$('upload').onclick=async()=>{const f=$('file').files[0];if(!f){setStatus('uploadStatus','Sélectionnez un document.');return}if(f.size>5000000){setStatus('uploadStatus','Fichier trop volumineux.');return}const fd=new FormData();fd.append('file',f);try{$('upload').disabled=true;const d=await request('/v1/documents/upload',{method:'POST',body:fd});setStatus('uploadStatus',`Import réussi : ${d.chunks} segment(s).`);refresh()}catch(e){setStatus('uploadStatus',e.message)}finally{$('upload').disabled=false}};
+$('ask').onclick=async()=>{let question=$('question').value.trim();if(question.length<3){setStatus('answer','Posez une question complète.');return}let agent=$('mode').value==='agentic';let path=agent?'/v1/agent/query':'/v1/query';let body={question};if(agent){if($('sourceA').value)body.source_a=$('sourceA').value;if($('sourceB').value)body.source_b=$('sourceB').value}try{$('ask').disabled=true;setStatus('answer','Recherche en cours…');const r=await request(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});setStatus('answer',r.answer);setStatus('modePill',agent?'Agentic RAG':'RAG classique');setStatus('sourceCount',r.sources.length+' source(s)');$('sources').replaceChildren();for(const s of r.sources){const c=el('div','');c.className='source';c.append(el('strong',`[${s.ref}] ${s.document} · segment ${s.chunk} · score ${s.score}`),el('p',s.excerpt));$('sources').append(c)}$('traceCard').style.display=agent?'block':'none';setStatus('trace',JSON.stringify(r.steps||[],null,2))}catch(e){setStatus('answer',e.message)}finally{$('ask').disabled=false}};
+</script></body></html>
