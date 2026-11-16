@@ -1,0 +1,25 @@
+name: Deploy AWS App Runner (manual)
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Build, push and request deployment
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_APP_NAME: ${{ vars.AWS_APP_NAME }}
+          APPRUNNER_ECR_ROLE_ARN: ${{ vars.APPRUNNER_ECR_ROLE_ARN }}
+          APPRUNNER_INSTANCE_ROLE_ARN: ${{ vars.APPRUNNER_INSTANCE_ROLE_ARN }}
+          APP_API_KEY_SECRET_ARN: ${{ secrets.APP_API_KEY_SECRET_ARN }}
+          DATABASE_URL_SECRET_ARN: ${{ secrets.DATABASE_URL_SECRET_ARN }}
+          GROQ_API_KEY_SECRET_ARN: ${{ secrets.GROQ_API_KEY_SECRET_ARN }}
+        run: ./scripts/deploy-aws.sh

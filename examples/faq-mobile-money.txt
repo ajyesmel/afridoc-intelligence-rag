@@ -1,0 +1,2 @@
+FAQ FICTIVE — Support Mobile Money Afrique francophone.
+Les opérations de transfert peuvent être contestées via le centre d'assistance du prestataire. Un dossier de réclamation mentionne la date, le montant et la référence de transaction; le code PIN ne doit jamais être partagé. Dans cette simulation, une demande d'assistance doit recevoir un premier accusé de réception sous 48 heures. Ce délai est fictif et ne reflète aucun engagement d'un opérateur réel.
